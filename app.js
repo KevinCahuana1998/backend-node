@@ -33,22 +33,6 @@ var uploadRoutes = require('./routes/upload');
 var imagenesRoutes = require('./routes/imagenes');
 
 
-// Conexión a la base de datos
-mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', (err, res) => {
-
-    if (err) throw err;
-
-    console.log('Base de datos: \x1b[32m%s\x1b[0m', 'online');
-
-});
-
-// Server index config
-// var serveIndex = require('serve-index');
-// app.use(express.static(__dirname + '/'))
-// app.use('/uploads', serveIndex(__dirname + '/uploads'));
-
-
-
 // Rutas
 app.use('/usuario', usuarioRoutes);
 app.use('/hospital', hospitalRoutes);
@@ -61,7 +45,29 @@ app.use('/img', imagenesRoutes);
 app.use('/', appRoutes);
 
 
-// Escuchar peticiones
-app.listen(3000, () => {
-    console.log('Express server puerto 3000: \x1b[32m%s\x1b[0m', 'online');
-});
+// Server index config
+// var serveIndex = require('serve-index');
+// app.use(express.static(__dirname + '/'))
+// app.use('/uploads', serveIndex(__dirname + '/uploads'));
+
+
+
+
+
+const DB_URI = 'mongodb+srv://cahuana:shinigami123x00@hospitalcluster-d61lj.mongodb.net/test?retryWrites=true&w=majority';
+const PORT = process.env.PORT;
+
+//Desabilitando un antiguo metodo que genera warning
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+
+mongoose.Promise = global.Promise;
+mongoose.connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+
+        console.log("La coneccion a Mongo DB es correcta");
+        app.listen(PORT, () => {
+            console.log("El servidor empezo a correr correctamente");
+        });
+    })
+    .catch(err => console.log(err));
